@@ -1,0 +1,212 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Four Realized Variance Stylized Facts</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-01-29"><meta name="DC.source" content="stylizedfacts.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Four Realized Variance Stylized Facts</h1><!--introduction--><p>This is an illustration of four stylized facts on RV, from chapter 5 of EFRM</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">RV Stylized Fact 1</a></li><li><a href="#2">RV Stylized Fact 2</a></li><li><a href="#3">RV Stylized Fact 3</a></li><li><a href="#4">RV Stylized Fact 4</a></li></ul></div><h2>RV Stylized Fact 1<a name="1"></a></h2><p>RVs are much more precise indicators of daily variance thanare daily squared returns.</p><pre class="codeinput">sp500data = readtable(<span class="string">'RV_DATA.xlsx'</span>);
+sp500ret = table2array(sp500data(:,2));
+sp500rv = table2array(sp500data(:,3));
+x_yr = x2mdate(sp500data.date);
+
+figure(1)
+subplot(2,1,1)
+plot(x_yr,sp500rv/10000)
+title(<span class="string">'Daily realized variance'</span>)
+datetick(<span class="string">'x'</span>,<span class="string">'keepticks'</span>,<span class="string">'keeplimits'</span>)
+xlim([x_yr(1) x_yr(end)])
+ylim([0 0.01])
+subplot(2,1,2)
+plot(x_yr,sp500ret.^2/10000)
+title(<span class="string">'Daily close-to-close squared returns'</span>)
+datetick(<span class="string">'x'</span>,<span class="string">'keepticks'</span>,<span class="string">'keeplimits'</span>)
+xlim([x_yr(1) x_yr(end)])
+ylim([0 0.01])
+</pre><img vspace="5" hspace="5" src="stylizedfacts_01.png" alt=""> <h2>RV Stylized Fact 2<a name="2"></a></h2><p>RV has large positive autocorrelations for many lags</p><pre class="codeinput">acf_rv = autocorr(sp500rv,200);
+acf_sr = autocorr(sp500ret.^2,200);
+figure(2)
+subplot(2,1,1)
+plot(1:200,acf_rv(2:end))
+ylim([0 0.65])
+title(<span class="string">'ACF of realized variance'</span>)
+subplot(2,1,2)
+plot(1:200,acf_sr(2:end))
+ylim([0 0.65])
+title(<span class="string">'ACF of squared return'</span>)
+</pre><img vspace="5" hspace="5" src="stylizedfacts_02.png" alt=""> <h2>RV Stylized Fact 3<a name="3"></a></h2><p>The log of RV is approximately normally distributed</p><pre class="codeinput">figure(3)
+subplot(2,3,1)
+[c,x_hist] = hist(sp500rv(sp500rv&lt;=3),40,<span class="string">'Normalization'</span>,<span class="string">'probability'</span>);
+bar(x_hist,c/sum(c));
+xlim([0 3])
+title(<span class="string">'Realized Variance'</span>)
+subplot(2,3,2)
+[c,x_hist] = hist(log(sp500rv(sp500rv&lt;=20)),40,<span class="string">'Normalization'</span>,<span class="string">'probability'</span>);
+bar(x_hist,c/sum(c));
+xlim([-4 4])
+title(<span class="string">'Log of Realized Variance'</span>)
+subplot(2,3,3)
+qqplot(log(sp500rv))
+subplot(2,3,4)
+[c,x_hist] = hist(sp500ret(abs(sp500ret)&lt;sqrt(3)).^2,40,<span class="string">'Normalization'</span>,<span class="string">'probability'</span>);
+bar(x_hist,c/sum(c));
+xlim([0 3])
+title(<span class="string">'Squared Return'</span>)
+subplot(2,3,5)
+[c,x_hist] = hist(log(sp500ret(abs(sp500ret)&lt;=10).^2),40,<span class="string">'Normalization'</span>,<span class="string">'probability'</span>);
+bar(x_hist,c/sum(c));
+title(<span class="string">'Log of Squared Return'</span>)
+subplot(2,3,6)
+qqplot(log(sp500ret.^2))
+</pre><img vspace="5" hspace="5" src="stylizedfacts_03.png" alt=""> <h2>RV Stylized Fact 4<a name="4"></a></h2><p>The daily return divided by the square root of RV is close to i.i.d. standard normal</p><pre class="codeinput">figure(4)
+subplot(1,2,1)
+[c,x_hist] = hist(sp500ret./sqrt(sp500rv),40,<span class="string">'Normalization'</span>,<span class="string">'probability'</span>);
+bar(x_hist,c/sum(c));
+title(<span class="string">'Distribution of Return divided by RV'</span>)
+xlim([-10 10])
+subplot(1,2,2)
+qqplot(sp500ret./sqrt(sp500rv))
+</pre><img vspace="5" hspace="5" src="stylizedfacts_04.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Four Realized Variance Stylized Facts
+% This is an illustration of four stylized facts on RV, from chapter 5 of
+% EFRM
+
+%% RV Stylized Fact 1
+% RVs are much more precise indicators of daily variance thanare daily
+% squared returns.
+
+sp500data = readtable('RV_DATA.xlsx');
+sp500ret = table2array(sp500data(:,2));
+sp500rv = table2array(sp500data(:,3));
+x_yr = x2mdate(sp500data.date);
+
+figure(1)
+subplot(2,1,1)
+plot(x_yr,sp500rv/10000)
+title('Daily realized variance')
+datetick('x','keepticks','keeplimits')
+xlim([x_yr(1) x_yr(end)])
+ylim([0 0.01])
+subplot(2,1,2)
+plot(x_yr,sp500ret.^2/10000)
+title('Daily close-to-close squared returns')
+datetick('x','keepticks','keeplimits')
+xlim([x_yr(1) x_yr(end)])
+ylim([0 0.01])
+
+%% RV Stylized Fact 2
+% RV has large positive autocorrelations for many lags
+acf_rv = autocorr(sp500rv,200);
+acf_sr = autocorr(sp500ret.^2,200);
+figure(2)
+subplot(2,1,1)
+plot(1:200,acf_rv(2:end))
+ylim([0 0.65])
+title('ACF of realized variance')
+subplot(2,1,2)
+plot(1:200,acf_sr(2:end))
+ylim([0 0.65])
+title('ACF of squared return')
+
+%% RV Stylized Fact 3
+% The log of RV is approximately normally distributed
+figure(3)
+subplot(2,3,1)
+[c,x_hist] = hist(sp500rv(sp500rv<=3),40,'Normalization','probability');
+bar(x_hist,c/sum(c));
+xlim([0 3])
+title('Realized Variance')
+subplot(2,3,2)
+[c,x_hist] = hist(log(sp500rv(sp500rv<=20)),40,'Normalization','probability');
+bar(x_hist,c/sum(c));
+xlim([-4 4]) 
+title('Log of Realized Variance')
+subplot(2,3,3)
+qqplot(log(sp500rv))
+subplot(2,3,4)
+[c,x_hist] = hist(sp500ret(abs(sp500ret)<sqrt(3)).^2,40,'Normalization','probability');
+bar(x_hist,c/sum(c));
+xlim([0 3])
+title('Squared Return')
+subplot(2,3,5)
+[c,x_hist] = hist(log(sp500ret(abs(sp500ret)<=10).^2),40,'Normalization','probability');
+bar(x_hist,c/sum(c));
+title('Log of Squared Return')
+subplot(2,3,6)
+qqplot(log(sp500ret.^2))
+
+%% RV Stylized Fact 4
+% The daily return divided by the square root of RV is close to i.i.d.
+% standard normal
+figure(4)
+subplot(1,2,1)
+[c,x_hist] = hist(sp500ret./sqrt(sp500rv),40,'Normalization','probability');
+bar(x_hist,c/sum(c));
+title('Distribution of Return divided by RV')
+xlim([-10 10])
+subplot(1,2,2)
+qqplot(sp500ret./sqrt(sp500rv))
+##### SOURCE END #####
+--></body></html>
