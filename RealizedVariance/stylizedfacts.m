@@ -1,4 +1,6 @@
 %% Four Realized Variance Stylized Facts
+% Author: Peiliang Guo
+%
 % This is an illustration of four stylized facts on RV, from chapter 5 of
 % EFRM
 

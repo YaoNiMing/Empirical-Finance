@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Comparison of Different GARCH models on SP500 Total return</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-01-29"><meta name="DC.source" content="SP500_GARCH.m"><style type="text/css">
+      --><title>Comparison of Different GARCH models on SP500 Total return</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-02-02"><meta name="DC.source" content="SP500_GARCH.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,73 +66,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Comparison of Different GARCH models on SP500 Total return</h1><p>The GARCH models being compared are GARCH, NGARCH, and HNGARCH models The parameters are estimated using MLE and then the normality of residuals are checked.</p><pre class="codeinput">dbtype <span class="string">garch_loglik.m</span>
+  </style></head><body><div class="content"><h1>Comparison of Different GARCH models on SP500 Total return</h1><!--introduction--><p>Author: Peiliang Guo</p><p>The GARCH models being compared are GARCH, NGARCH, and HNGARCH models The parameters are estimated using MLE and then the normality of residuals are checked.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">helper functions</a></li><li><a href="#2">Data processing</a></li><li><a href="#3">MLE of GARCH model</a></li><li><a href="#4">MLE of NGARCH model</a></li><li><a href="#5">MLE of HNGARCH model</a></li><li><a href="#6">Independence and Normality Diagnostics of model fit</a></li><li><a href="#7">Raw return and squared returns ACF and raw return nomal QQ plot</a></li></ul></div><h2>helper functions<a name="1"></a></h2><p>var_process calculates variance h(t) from given set of parameters</p><p>garch_loglik calculates the likelihood of the current set of parameters</p><pre class="codeinput">dbtype <span class="string">garch_loglik.m</span>
 dbtype <span class="string">var_process.m</span>
-
-<span class="comment">%obtaining SP500 total return</span>
-raw_data = csvread(<span class="string">'SP500TR_1992_2016.csv'</span>,1,1);
-sp500tr = log(raw_data(end-1:-1:1,6)./raw_data(end:-1:2,6));
-
-
-<span class="comment">%parameter MLE</span>
-options=optimset(<span class="string">'MaxFunEvals'</span>,1000,<span class="string">'Maxiter'</span>,1000,<span class="string">'Display'</span>,<span class="string">'iter'</span>,<span class="string">'LargeScale'</span>,<span class="string">'off'</span>);
-<span class="comment">%GARCH model</span>
-garch_param = fmincon(@(param)-garch_loglik(<span class="string">'GARCH'</span>,param,sp500tr),<span class="keyword">...</span>
-    [0.1,0.8,0.1,std(sp500tr(1:100))],[],[],[],[],zeros(4,1),[],[],options);
-garch_ht = var_process(<span class="string">'GARCH'</span>,garch_param,sp500tr);
-garch_zt = sp500tr./sqrt(garch_ht);
-
-<span class="comment">%NGARCH</span>
-ngarch_param = fmincon(@(param)-garch_loglik(<span class="string">'NGARCH'</span>,param,sp500tr),<span class="keyword">...</span>
-    [0.1,0.8,0.1, 0.1,std(sp500tr(1:100))],[],[],[],[],zeros(5,1),[],[],options);
-ngarch_ht = var_process(<span class="string">'NGARCH'</span>,ngarch_param,sp500tr);
-ngarch_zt = sp500tr./sqrt(ngarch_ht);
-
-<span class="comment">%HNGARCH</span>
-hngarch_param = fmincon(@(param)-garch_loglik(<span class="string">'HNGARCH'</span>,param,sp500tr),<span class="keyword">...</span>
-    [0.1,0.8,0.1, 0.1, 0.1,std(sp500tr(1:100))],[],[],[],[],zeros(6,1),[],[],options);
-hngarch_ht = var_process(<span class="string">'HNGARCH'</span>,hngarch_param,sp500tr);
-hngarch_zt = (sp500tr-hngarch_param(4)*hngarch_ht)./sqrt(hngarch_ht);
-
-
-figure(1)
-set(gcf,<span class="string">'units'</span>,<span class="string">'centimeters'</span>,<span class="string">'position'</span>,[0 0 30 20])
-subplot(2,3,1)
-stem(autocorr(garch_zt.^2))
-title(<span class="string">'ACF of GARCH(1,1) Squared Residual'</span>)
-xlabel(<span class="string">'lag'</span>)
-subplot(2,3,4)
-qqplot(garch_zt)
-title(<span class="string">'GARCH(1,1) Residual Normal-QQ'</span>)
-subplot(2,3,2)
-stem(autocorr(ngarch_zt.^2))
-title(<span class="string">'ACF of NGARCH(1,1) Squared Residual'</span>)
-xlabel(<span class="string">'lag'</span>)
-subplot(2,3,5)
-title(<span class="string">'NGARCH(1,1) Residual Normal-QQ'</span>)
-qqplot(ngarch_zt)
-subplot(2,3,3)
-stem(autocorr(hngarch_zt.^2))
-title(<span class="string">'ACF of HN-GARCH(1,1) Squared Residual'</span>)
-xlabel(<span class="string">'lag'</span>)
-ylim([-0.2 1.2])
-subplot(2,3,6)
-title(<span class="string">'HN-GARCH(1,1) Residual Normal-QQ'</span>)
-qqplot(hngarch_zt)
-
-<span class="comment">%raw return and squared returns ACF and raw return nomal QQ plot</span>
-figure(2)
-subplot(2,2,1)
-stem(autocorr(sp500tr))
-title(<span class="string">'ACF of Raw Total Return on SP500'</span>)
-xlabel(<span class="string">'lag'</span>)
-subplot(2,2,3)
-qqplot(sp500tr)
-title(<span class="string">'Raw Total Return Normal-QQ'</span>)
-subplot(2,2,2)
-stem(autocorr(sp500tr.^2))
-title(<span class="string">'ACF of Squared Total Return on SP500'</span>)
-xlabel(<span class="string">'lag'</span>)
 </pre><pre class="codeoutput">
 1     function ll = garch_loglik(model,param,y)
 2         %parameter checking
@@ -180,7 +115,16 @@ xlabel(<span class="string">'lag'</span>)
 19            end
 20        end
 21    end
-                                            First-order      Norm of
+</pre><h2>Data processing<a name="2"></a></h2><pre class="codeinput"><span class="comment">%obtaining SP500 total return</span>
+raw_data = csvread(<span class="string">'SP500TR_1992_2016.csv'</span>,1,1);
+sp500tr = log(raw_data(end-1:-1:1,6)./raw_data(end:-1:2,6));
+</pre><h2>MLE of GARCH model<a name="3"></a></h2><pre class="codeinput"><span class="comment">%parameter MLE</span>
+options=optimset(<span class="string">'MaxFunEvals'</span>,1000,<span class="string">'Maxiter'</span>,1000,<span class="string">'Display'</span>,<span class="string">'iter'</span>,<span class="string">'LargeScale'</span>,<span class="string">'off'</span>);
+garch_param = fmincon(@(param)-garch_loglik(<span class="string">'GARCH'</span>,param,sp500tr),<span class="keyword">...</span>
+    [0.1,0.8,0.1,std(sp500tr(1:100))],[],[],[],[],zeros(4,1),[],[],options);
+garch_ht = var_process(<span class="string">'GARCH'</span>,garch_param,sp500tr);
+garch_zt = sp500tr./sqrt(garch_ht);
+</pre><pre class="codeoutput">                                            First-order      Norm of
  Iter F-count            f(x)  Feasibility   optimality         step
     0       5    3.603906e+03    0.000e+00    6.139e+03
     1      10   -4.432315e+03    0.000e+00    4.960e+04    7.996e-01
@@ -239,7 +183,11 @@ satisfied to within the default value of the constraint tolerance.
 
 
 
-                                            First-order      Norm of
+</pre><h2>MLE of NGARCH model<a name="4"></a></h2><pre class="codeinput">ngarch_param = fmincon(@(param)-garch_loglik(<span class="string">'NGARCH'</span>,param,sp500tr),<span class="keyword">...</span>
+    [0.1,0.8,0.1, 0.1,std(sp500tr(1:100))],[],[],[],[],zeros(5,1),[],[],options);
+ngarch_ht = var_process(<span class="string">'NGARCH'</span>,ngarch_param,sp500tr);
+ngarch_zt = sp500tr./sqrt(ngarch_ht);
+</pre><pre class="codeoutput">                                            First-order      Norm of
  Iter F-count            f(x)  Feasibility   optimality         step
     0       6    3.619521e+03    0.000e+00    6.170e+03
     1      12   -4.432308e+03    0.000e+00    4.960e+04    8.030e-01
@@ -296,7 +244,11 @@ satisfied to within the default value of the constraint tolerance.
 
 
 
-                                            First-order      Norm of
+</pre><h2>MLE of HNGARCH model<a name="5"></a></h2><pre class="codeinput">hngarch_param = fmincon(@(param)-garch_loglik(<span class="string">'HNGARCH'</span>,param,sp500tr),<span class="keyword">...</span>
+    [0.1,0.8,0.1, 0.1, 0.1,std(sp500tr(1:100))],[],[],[],[],zeros(6,1),[],[],options);
+hngarch_ht = var_process(<span class="string">'HNGARCH'</span>,hngarch_param,sp500tr);
+hngarch_zt = (sp500tr-hngarch_param(4)*hngarch_ht)./sqrt(hngarch_ht);
+</pre><pre class="codeoutput">                                            First-order      Norm of
  Iter F-count            f(x)  Feasibility   optimality         step
     0       7    3.683270e+03    0.000e+00    6.295e+03
     1      14   -4.422085e+03    0.000e+00    4.896e+04    8.054e-01
@@ -348,42 +300,86 @@ and constraints are satisfied to within the default value of the constraint tole
 
 
 
-</pre><img vspace="5" hspace="5" src="SP500_GARCH_01.png" alt=""> <img vspace="5" hspace="5" src="SP500_GARCH_02.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+</pre><h2>Independence and Normality Diagnostics of model fit<a name="6"></a></h2><pre class="codeinput">figure(1)
+set(gcf,<span class="string">'units'</span>,<span class="string">'centimeters'</span>,<span class="string">'position'</span>,[0 0 30 20])
+subplot(2,3,1)
+stem(autocorr(garch_zt.^2))
+title(<span class="string">'ACF of GARCH(1,1) Squared Residual'</span>)
+xlabel(<span class="string">'lag'</span>)
+subplot(2,3,4)
+qqplot(garch_zt)
+title(<span class="string">'GARCH(1,1) Residual Normal-QQ'</span>)
+subplot(2,3,2)
+stem(autocorr(ngarch_zt.^2))
+title(<span class="string">'ACF of NGARCH(1,1) Squared Residual'</span>)
+xlabel(<span class="string">'lag'</span>)
+subplot(2,3,5)
+qqplot(ngarch_zt)
+title(<span class="string">'NGARCH(1,1) Residual Normal-QQ'</span>)
+subplot(2,3,3)
+stem(autocorr(hngarch_zt.^2))
+title(<span class="string">'ACF of HN-GARCH(1,1) Squared Residual'</span>)
+xlabel(<span class="string">'lag'</span>)
+ylim([-0.2 1.2])
+subplot(2,3,6)
+qqplot(hngarch_zt)
+title(<span class="string">'HN-GARCH(1,1) Residual Normal-QQ'</span>)
+</pre><img vspace="5" hspace="5" src="SP500_GARCH_01.png" alt=""> <h2>Raw return and squared returns ACF and raw return nomal QQ plot<a name="7"></a></h2><p>Shows improvement of fit over original data</p><pre class="codeinput">figure(2)
+subplot(2,2,1)
+stem(autocorr(sp500tr))
+title(<span class="string">'ACF of Raw Total Return on SP500'</span>)
+xlabel(<span class="string">'lag'</span>)
+subplot(2,2,3)
+qqplot(sp500tr)
+title(<span class="string">'Raw Total Return Normal-QQ'</span>)
+subplot(2,2,2)
+stem(autocorr(sp500tr.^2))
+title(<span class="string">'ACF of Squared Total Return on SP500'</span>)
+xlabel(<span class="string">'lag'</span>)
+</pre><img vspace="5" hspace="5" src="SP500_GARCH_02.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Comparison of Different GARCH models on SP500 Total return
+% Author: Peiliang Guo
+%
 % The GARCH models being compared are GARCH, NGARCH, and HNGARCH models
 % The parameters are estimated using MLE and then the normality of
 % residuals are checked.
 
+%% helper functions
+% var_process calculates variance h(t) from given set of parameters
+%
+% garch_loglik calculates the likelihood of the current set of parameters
 dbtype garch_loglik.m
 dbtype var_process.m
+
+%% Data processing
 
 %obtaining SP500 total return 
 raw_data = csvread('SP500TR_1992_2016.csv',1,1);
 sp500tr = log(raw_data(end-1:-1:1,6)./raw_data(end:-1:2,6));
 
+%% MLE of GARCH model
 
 %parameter MLE
 options=optimset('MaxFunEvals',1000,'Maxiter',1000,'Display','iter','LargeScale','off');
-%GARCH model
 garch_param = fmincon(@(param)-garch_loglik('GARCH',param,sp500tr),...
     [0.1,0.8,0.1,std(sp500tr(1:100))],[],[],[],[],zeros(4,1),[],[],options);
 garch_ht = var_process('GARCH',garch_param,sp500tr);
 garch_zt = sp500tr./sqrt(garch_ht);
 
-%NGARCH 
+%% MLE of NGARCH model
 ngarch_param = fmincon(@(param)-garch_loglik('NGARCH',param,sp500tr),...
     [0.1,0.8,0.1, 0.1,std(sp500tr(1:100))],[],[],[],[],zeros(5,1),[],[],options);
 ngarch_ht = var_process('NGARCH',ngarch_param,sp500tr);
 ngarch_zt = sp500tr./sqrt(ngarch_ht);
 
-%HNGARCH
+%% MLE of HNGARCH model
 hngarch_param = fmincon(@(param)-garch_loglik('HNGARCH',param,sp500tr),...
     [0.1,0.8,0.1, 0.1, 0.1,std(sp500tr(1:100))],[],[],[],[],zeros(6,1),[],[],options);
 hngarch_ht = var_process('HNGARCH',hngarch_param,sp500tr);
 hngarch_zt = (sp500tr-hngarch_param(4)*hngarch_ht)./sqrt(hngarch_ht);
 
-
+%% Independence and Normality Diagnostics of model fit
 figure(1)
 set(gcf,'units','centimeters','position',[0 0 30 20])
 subplot(2,3,1)
@@ -398,18 +394,19 @@ stem(autocorr(ngarch_zt.^2))
 title('ACF of NGARCH(1,1) Squared Residual')
 xlabel('lag')
 subplot(2,3,5)
-title('NGARCH(1,1) Residual Normal-QQ')
 qqplot(ngarch_zt)
+title('NGARCH(1,1) Residual Normal-QQ')
 subplot(2,3,3)
 stem(autocorr(hngarch_zt.^2))
 title('ACF of HN-GARCH(1,1) Squared Residual')
 xlabel('lag')
 ylim([-0.2 1.2])
 subplot(2,3,6)
-title('HN-GARCH(1,1) Residual Normal-QQ')
 qqplot(hngarch_zt)
+title('HN-GARCH(1,1) Residual Normal-QQ')
 
-%raw return and squared returns ACF and raw return nomal QQ plot
+%% Raw return and squared returns ACF and raw return nomal QQ plot
+% Shows improvement of fit over original data
 figure(2)
 subplot(2,2,1)
 stem(autocorr(sp500tr))

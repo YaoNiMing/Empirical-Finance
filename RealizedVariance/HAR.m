@@ -1,6 +1,9 @@
 %% HAR Model on RV
+% Author: Peiliang Guo
+%
 % Regression on the log of RV with different lags
 
+%% Data Processing and Running In-Sample Regression and Out-of-Sample Test
 sp500data = readtable('RV_DATA.xlsx');
 sp500rv = table2array(sp500data(:,3));
 x_yr = x2mdate(sp500data.date);
@@ -32,6 +35,8 @@ for i = test_idx:length(rv_y)
     sig_resi = std(rv_yi - rv_Xi*phi);
     test_rv_pred(i-test_idx+1) = exp(rv_X(i,:)*phi)*exp(sig_resi*2/2);
 end
+
+%% Normality Assumption Diagnostic
 figure(1)
 subplot(1,2,1)
 [c,x_hist] = hist(res,40,'Normalization','probability');
@@ -41,6 +46,9 @@ xlabel('residual')
 xlim([-2 3])
 subplot(1,2,2)
 qqplot(res)
+title('Residuals Normal-QQ')
+
+%% Regression Goodness of fit and Out-of-Sample Test
 figure(2)
 subplot(3,1,1)
 plot(x_yr(max(win_sizes)+1:end),sp500rv(max(win_sizes)+1:end))

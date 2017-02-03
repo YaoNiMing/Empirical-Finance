@@ -1,12 +1,16 @@
 %% Daily RV and BPV from SP500 data
+% Author: Peiliang Guo
+%
 % Uses a average sparse RV calculation method from minute data.
 % Each day there are 390 minutes active for trading.
 % The log RV and log BPV are also plotted so that the plots are more
 % informative
 
-load('SP500INDEX_LNR_INTRADAY1MIN_2004_2013.mat')
 
-% RV calculation
+
+%% RV calculation
+% Uses an average RV with window size = 5
+load('SP500INDEX_LNR_INTRADAY1MIN_2004_2013.mat')
 group = 5; %sparse lag = 5
 processed = 0;
 data_l = length(sp500ret);
@@ -29,18 +33,18 @@ while processed < data_l
 end
 dates = datenum(int2str(dates),'yyyymmdd');
 figure(1)
-set(gcf,'units','centimeters','position',[0 0 20 30])
-subplot(4,1,1)
+subplot(2,1,1)
 plot(dates,rv)
 datetick('x','keepticks','keeplimits')
 xlim([min(dates) max(dates)])
 ylabel('Daily RV')
-subplot(4,1,2)
+subplot(2,1,2)
 plot(dates,log(rv))
 datetick('x','keepticks','keeplimits')
 xlim([min(dates) max(dates)])
 ylabel('log Daily RV')
-% BPV Calculation
+
+%% BPV Calculation
 processed = 0;
 bpv = zeros(length(rv),1);
 i = 1;
@@ -51,12 +55,13 @@ while processed < data_l
     i = i+1;
     processed = processed + 390;
 end
-subplot(4,1,3)
+figure(2)
+subplot(2,1,1)
 plot(dates,bpv)
 datetick('x','keepticks','keeplimits')
 xlim([min(dates) max(dates)])
 ylabel('Daily BPV')
-subplot(4,1,4)
+subplot(2,1,2)
 plot(dates,log(bpv))
 datetick('x','keepticks','keeplimits')
 xlim([min(dates) max(dates)])

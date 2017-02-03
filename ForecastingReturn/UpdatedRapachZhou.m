@@ -1,14 +1,15 @@
 %% Study of Rapach and Zhou's 2012 paper uing updated data
+% Author: Peiliang Guo
 % Runs 14 regressors including market info and macro factors on equity premium
 % Predicts out of sample market returns and compare with historical average
 % benchmark prediction. 
 % Includes predictions using Kitchen-sink and POOL-avg prediction
+%% helper functions
 warning('off','all')
 dbtype predict_r.m
 dbtype plot_pred.m
 dbtype plot_pred_perf.m
-
-%data processing
+%% data processing
 raw_data = xlsread('PredictorData2015.xlsx','Monthly');
 label = {'A. log(DP)', 'B. log(DY)', 'C. log(EP)', 'D. log(DE)',...
     'E. SVAR', 'F. BM', 'G. NTIS', 'H. TBL',...
@@ -79,7 +80,7 @@ for i = 1:test_len
 end
 
 
-%Making predictions using predictors, and plotting 
+%% Making predictions using predictors, and plotting 
 % prediction performance measured by sum of squared error 
 % of ep_avg benchmark minus sse of prediction
 
@@ -98,6 +99,8 @@ r_pred(:,15) = predict_r(pred_data,r,test_idx);
 %pool-avg pred
 r_pred(:,16) = mean(r_pred(:,1:14),2);
 
+%% Performance of predictions of individual predictors
+% Measured by cumulative error relative to historical average prediction
 figure(1)
 set(gcf,'units','centimeters','position',[0 0 30 30])
 for i = 1:14
@@ -108,6 +111,7 @@ for i = 1:14
     hold off
 end
 
+%% Plot of Actual predictions from individual predictors
 figure(2)
 set(gcf,'units','centimeters','position',[0 0 30 30])
 for i = 1:14
@@ -118,6 +122,7 @@ for i = 1:14
     hold off
 end
 
+%% Performance of Kitchen sink and POOL-AVG predictions
 figure(3)
 subplot(2,1,1)
 hold on
@@ -130,6 +135,7 @@ plot_troughs(troughs)
 plot_pred_perf(r_pred(:,16), r_avg, r_test,test_year,[-0.005 0.02],'C. POOL-AVG')
 hold off
 
+%% Actual predictions of Kitchen sink and POOL-AVG
 figure(4)
 subplot(2,1,1)
 hold on

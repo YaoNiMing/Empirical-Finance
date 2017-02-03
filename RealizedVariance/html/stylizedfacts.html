@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Four Realized Variance Stylized Facts</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-01-29"><meta name="DC.source" content="stylizedfacts.m"><style type="text/css">
+      --><title>Four Realized Variance Stylized Facts</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-02-02"><meta name="DC.source" content="stylizedfacts.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Four Realized Variance Stylized Facts</h1><!--introduction--><p>This is an illustration of four stylized facts on RV, from chapter 5 of EFRM</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">RV Stylized Fact 1</a></li><li><a href="#2">RV Stylized Fact 2</a></li><li><a href="#3">RV Stylized Fact 3</a></li><li><a href="#4">RV Stylized Fact 4</a></li></ul></div><h2>RV Stylized Fact 1<a name="1"></a></h2><p>RVs are much more precise indicators of daily variance thanare daily squared returns.</p><pre class="codeinput">sp500data = readtable(<span class="string">'RV_DATA.xlsx'</span>);
+  </style></head><body><div class="content"><h1>Four Realized Variance Stylized Facts</h1><!--introduction--><p>Author: Peiliang Guo</p><p>This is an illustration of four stylized facts on RV, from chapter 5 of EFRM</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">RV Stylized Fact 1</a></li><li><a href="#2">RV Stylized Fact 2</a></li><li><a href="#3">RV Stylized Fact 3</a></li><li><a href="#4">RV Stylized Fact 4</a></li></ul></div><h2>RV Stylized Fact 1<a name="1"></a></h2><p>RVs are much more precise indicators of daily variance thanare daily squared returns.</p><pre class="codeinput">sp500data = readtable(<span class="string">'RV_DATA.xlsx'</span>);
 sp500ret = table2array(sp500data(:,2));
 sp500rv = table2array(sp500data(:,3));
 x_yr = x2mdate(sp500data.date);
@@ -130,6 +130,8 @@ qqplot(sp500ret./sqrt(sp500rv))
 </pre><img vspace="5" hspace="5" src="stylizedfacts_04.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Four Realized Variance Stylized Facts
+% Author: Peiliang Guo
+%
 % This is an illustration of four stylized facts on RV, from chapter 5 of
 % EFRM
 
